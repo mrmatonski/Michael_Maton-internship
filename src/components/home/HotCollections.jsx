@@ -68,7 +68,7 @@ const HotCollections = () => {
           </div>
           {loading ? (
             <div className="col-lg-12">
-              <OwlCarousel {...skeletonCarouselOptions}>
+              <OwlCarousel key="hot-collections-loading" {...skeletonCarouselOptions}>
                 {new Array(6).fill(0).map((_, index) => (
                   <div className="nft_coll" key={index}>
                     <div className="nft_wrap">
@@ -87,7 +87,7 @@ const HotCollections = () => {
             </div>
           ) : (
             <div className="col-lg-12">
-              <OwlCarousel {...carouselOptions}>
+              <OwlCarousel key="hot-collections-loaded" {...carouselOptions}>
                 {hotCollections.map((collection) => (
                   <div className="nft_coll" key={collection.id}>
                     <div className="nft_wrap">
