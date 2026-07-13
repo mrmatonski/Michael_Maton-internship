@@ -60,14 +60,14 @@ const HotCollections = () => {
     <section id="section-collections" className="no-bottom">
       <div className="container">
         <div className="row">
-          <div className="col-lg-12">
+          <div className="col-lg-12" data-aos="fade-up">
             <div className="text-center">
               <h2>Hot Collections</h2>
               <div className="small-border bg-color-2"></div>
             </div>
           </div>
           {loading ? (
-            <div className="col-lg-12">
+            <div className="col-lg-12" data-aos="fade-up">
               <OwlCarousel key="hot-collections-loading" {...skeletonCarouselOptions}>
                 {new Array(6).fill(0).map((_, index) => (
                   <div className="nft_coll" key={index}>
@@ -86,7 +86,7 @@ const HotCollections = () => {
               </OwlCarousel>
             </div>
           ) : (
-            <div className="col-lg-12">
+            <div className="col-lg-12" data-aos="fade-up">
               <OwlCarousel key="hot-collections-loaded" {...carouselOptions}>
                 {hotCollections.map((collection) => (
                   <div className="nft_coll" key={collection.id}>
