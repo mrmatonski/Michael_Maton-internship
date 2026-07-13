@@ -15,7 +15,13 @@ const TopSellers = () => {
           "https://us-central1-nft-cloud-functions.cloudfunctions.net/topSellers"
         );
 
-        setTopSellers(data);
+        const sellers = Array.isArray(data) ? data : [];
+
+        setTopSellers(sellers);
+
+        if (sellers.length === 0) {
+          setError("No top sellers are available right now.");
+        }
       } catch (error) {
         console.error("Failed to fetch top sellers:", error);
         setError("Unable to load top sellers right now.");
