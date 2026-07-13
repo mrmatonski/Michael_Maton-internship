@@ -37,7 +37,7 @@ const TopSellers = () => {
     <section id="section-popular" className="pb-5">
       <div className="container">
         <div className="row">
-          <div className="col-lg-12">
+          <div className="col-lg-12" data-aos="fade-up">
             <div className="text-center">
               <h2>Top Sellers</h2>
               <div className="small-border bg-color-2"></div>
@@ -64,11 +64,15 @@ const TopSellers = () => {
                         </div>
                       </li>
                     ))
-                  : topSellers.map((seller) => (
-                      <li key={seller.id}>
+                  : topSellers.map((seller, index) => (
+                      <li
+                        key={seller.id}
+                        data-aos="fade-up"
+                        data-aos-delay={(index % 4) * 50}
+                      >
                         <div className="author_list_pp">
                           <Link
-                            to="/author"
+                            to={`/author/${seller.authorId}`}
                             title={`View ${seller.authorName}'s profile`}
                           >
                             <img
@@ -80,7 +84,9 @@ const TopSellers = () => {
                           </Link>
                         </div>
                         <div className="author_list_info">
-                          <Link to="/author">{seller.authorName}</Link>
+                          <Link to={`/author/${seller.authorId}`}>
+                            {seller.authorName}
+                          </Link>
                           <span>{seller.price} ETH</span>
                         </div>
                       </li>

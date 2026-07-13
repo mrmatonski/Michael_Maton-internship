@@ -110,14 +110,21 @@ const ItemDetails = () => {
               </div>
             ) : (
               <div className="row">
-                <div className="col-md-6 text-center">
+                <div
+                  className="col-md-6 text-center"
+                  data-aos="fade-right"
+                >
                   <img
                     src={item.nftImage}
                     className="img-fluid img-rounded mb-sm-30 nft-image"
                     alt={item.title}
                   />
                 </div>
-                <div className="col-md-6">
+                <div
+                  className="col-md-6"
+                  data-aos="fade-left"
+                  data-aos-delay="100"
+                >
                   <div className="item_info">
                     <h2>{item.title}</h2>
 
