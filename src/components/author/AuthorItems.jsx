@@ -30,10 +30,12 @@ const AuthorItems = ({ author, loading }) => {
             ? Array.from({ length: 8 }, (_, index) => (
                 <AuthorItemSkeleton key={index} />
               ))
-            : items.map((item) => (
+            : items.map((item, index) => (
                 <div
                   className="col-lg-3 col-md-6 col-sm-6 col-xs-12"
                   key={item.id}
+                  data-aos="fade-up"
+                  data-aos-delay={(index % 4) * 50}
                 >
                   <div className="nft__item">
                     <div className="author_list_pp">
@@ -83,7 +85,7 @@ const AuthorItems = ({ author, loading }) => {
                         </div>
                       </div>
 
-                      <Link to="/item-details">
+                      <Link to={`/item-details/${item.nftId}`}>
                         <img
                           src={item.nftImage}
                           className="lazy nft__item_preview"
@@ -93,7 +95,7 @@ const AuthorItems = ({ author, loading }) => {
                     </div>
 
                     <div className="nft__item_info">
-                      <Link to="/item-details">
+                      <Link to={`/item-details/${item.nftId}`}>
                         <h4>{item.title}</h4>
                       </Link>
                       <div className="nft__item_price">{item.price} ETH</div>
