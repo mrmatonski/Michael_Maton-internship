@@ -13,7 +13,8 @@ const Author = () => {
   const [author, setAuthor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [copyStatus, setCopyStatus] = useState("idle");
+  const [following, setFollowing] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -21,7 +22,8 @@ const Author = () => {
     async function fetchAuthor() {
       setLoading(true);
       setError("");
-      setCopied(false);
+      setCopyStatus("idle");
+      setFollowing(false);
 
       try {
         const { data } = await axios.get(
@@ -58,17 +60,71 @@ const Author = () => {
     };
   }, [activeAuthorId]);
 
-  async function copyAddress() {
+  function copyAddress() {
     if (!author?.address) {
       return;
     }
 
+    const selectWalletAddress = () => {
+      const wallet = document.getElementById("wallet");
+      const selection = window.getSelection();
+      const range = document.createRange();
+
+      range.selectNodeContents(wallet);
+      selection.removeAllRanges();
+      selection.addRange(range);
+
+      return selection;
+    };
+
+    let copySucceeded = false;
+    const selection = selectWalletAddress();
+
     try {
-      await navigator.clipboard.writeText(author.address);
-      setCopied(true);
-    } catch (error) {
-      console.error("Failed to copy wallet address:", error);
+      copySucceeded = document.execCommand("copy");
+    } finally {
+      selection.removeAllRanges();
     }
+
+    if (copySucceeded) {
+      setCopyStatus("copied");
+      return;
+    }
+
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = author.address;
+      textArea.setAttribute("readonly", "");
+      textArea.style.position = "absolute";
+      textArea.style.left = "-9999px";
+      document.body.appendChild(textArea);
+      textArea.select();
+      textArea.setSelectionRange(0, textArea.value.length);
+      copySucceeded = document.execCommand("copy");
+      document.body.removeChild(textArea);
+    } catch (error) {
+      console.warn("Synchronous copy fallback unavailable:", error);
+    }
+
+    if (copySucceeded) {
+      setCopyStatus("copied");
+      return;
+    }
+
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard
+        .writeText(author.address)
+        .then(() => setCopyStatus("copied"))
+        .catch((error) => {
+          console.warn("Automatic wallet copy unavailable:", error);
+          selectWalletAddress();
+          setCopyStatus("selected");
+        });
+      return;
+    }
+
+    selectWalletAddress();
+    setCopyStatus("selected");
   }
 
   return (
@@ -122,10 +178,18 @@ const Author = () => {
                               <button
                                 type="button"
                                 id="btn_copy"
-                                title="Copy wallet address"
+                                title={
+                                  copyStatus === "selected"
+                                    ? "Wallet selected; press Command+C to copy"
+                                    : "Copy wallet address"
+                                }
                                 onClick={copyAddress}
                               >
-                                {copied ? "Copied" : "Copy"}
+                                {copyStatus === "copied"
+                                  ? "Copied"
+                                  : copyStatus === "selected"
+                                  ? "Selected"
+                                  : "Copy"}
                               </button>
                             </h4>
                           )}
@@ -138,11 +202,17 @@ const Author = () => {
                           <Skeleton width="110px" height="18px" />
                         ) : (
                           <div className="profile_follower">
-                            {author.followers} followers
+                            {author.followers + (following ? 1 : 0)} followers
                           </div>
                         )}
-                        <button type="button" className="btn-main">
-                          Follow
+                        <button
+                          type="button"
+                          className="btn-main"
+                          aria-pressed={following}
+                          onClick={() => setFollowing((value) => !value)}
+                          disabled={loading}
+                        >
+                          {following ? "Unfollow" : "Follow"}
                         </button>
                       </div>
                     </div>
